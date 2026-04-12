@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área ADM</title>
+
+<style>
+body{
+background:#000;
+color:#fff;
+font-family:Arial;
+display:flex;
+justify-content:center;
+padding:10px;
+margin:0;
+}
+
+.card{
+width:100%;
+max-width:600px;
+background:#0b0b0b;
+padding:20px;
+border-radius:15px;
+box-shadow:0 0 15px rgb(255, 0, 0);
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+background:red;
+color:#fff;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Área Administrativa</h2>
+
+<input id="senha" placeholder="Senha">
+<button onclick="login()">Entrar</button>
+
+<div id="painel" style="display:none">
+<h3>Ranking</h3>
+<div id="rank"></div>
+
+<button onclick="limpar()">Limpar Ranking</button>
+<button onclick="voltar()">Voltar</button>
+</div>
+
+</div>
+
+<script>
+
+function login(){
+let s=document.getElementById("senha").value;
+
+if(s!="2821"){
+alert("Senha errada");
+return;
+}
+
+document.getElementById("painel").style.display="block";
+mostrar();
+}
+
+function mostrar(){
+let r=JSON.parse(localStorage.getItem("rank"))||[];
+r.sort((a,b)=>b.p-a.p);
+
+document.getElementById("rank").innerHTML=
+r.map((x,i)=>`${i+1}º ${x.n} - ${x.p}`).join("<br>");
+}
+
+function limpar(){
+localStorage.removeItem("rank");
+mostrar();
+}
+
+function voltar(){
+window.location.href="index.html";
+}
+
+</script>
+
+</body>
+</html>

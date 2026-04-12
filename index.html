@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3M4l4QJL02_5uMXI1BqD_6qP61Uq8wNTug&s" rel="icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+background:#000;
+color:#fff;
+font-family:Arial;
+display:flex;
+justify-content:center;
+padding:10px;
+margin:0;
+}
+
+.card{
+width:100%;
+max-width:950px;
+background:#0b0b0b;
+padding:15px;
+border-radius:15px;
+box-shadow:0 0 15px red;
+}
+
+h2{font-size:20px;}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+background:red;
+color:#fff;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:10px;
+margin-top:10px;
+font-size:16px;
+}
+
+.opcao{
+padding:14px;
+margin-top:10px;
+background:#111;
+border:1px solid #222;
+border-radius:10px;
+cursor:pointer;
+}
+
+.certa{background:green;}
+.errada{background:darkred;}
+
+#quiz,#final{display:none;}
+
+#progresso{
+margin-bottom:10px;
+color:#ff4d4d;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div id="inicio">
+<h2>Simulada Português</h2>
+
+<input id="nome" placeholder="Seu nome">
+<button onclick="iniciar()">Iniciar Prova</button>
+
+<button onclick="window.location.href='adm.html'">Área ADM</button>
+</div>
+
+<div id="quiz">
+<div id="progresso"></div>
+<h2 id="p"></h2>
+<div id="op"></div>
+<p id="exp"></p>
+<button onclick="prox()">Próxima</button>
+</div>
+
+<div id="final">
+<h2>Resultado Final</h2>
+<p id="res"></p>
+
+<h3>🏆 Ranking Geral</h3>
+<div id="ranking"></div>
+<button onclick="reiniciar()">Reiniciar Prova</button>
+<button onclick="gerarPDF()">Baixar PDF</button>
+</div>
+
+</div>
+
+<script>
+
+let nome="",i=0,pontos=0,respostas=[],respondido=false;
+function reiniciar(){
+i = 0;
+pontos = 0;
+respostas = [];
+respondido = false;
+
+document.getElementById("final").style.display = "none";
+document.getElementById("quiz").style.display = "none";
+document.getElementById("inicio").style.display = "block";
+
+document.getElementById("nome").value = "";
+}
+
+/* ================= QUESTÕES ================= */
+
+const banco=[
+
+// ================= LITERATURA =================
+
+{
+t:"O Barroco brasileiro foi marcado por conflitos e dualidades, refletindo a tensão entre valores religiosos e mundanos. Gregório de Matos, um de seus principais representantes, utilizava a linguagem para criticar a sociedade de sua época. Com base nessas características, assinale a alternativa correta:",
+o:[
+"O Barroco valoriza a simplicidade e a natureza",
+"O Barroco apresenta contrastes entre ideias opostas",
+"O Barroco rejeita qualquer forma de crítica social",
+"O Barroco é totalmente objetivo e racional"
+],
+c:1,x:"O Barroco é marcado por dualidade e contraste."
+},
+
+{
+t:"Gregório de Matos ficou conhecido por suas críticas à sociedade colonial, à Igreja e às autoridades. Por esse motivo, recebeu um apelido característico. Assinale a alternativa correta:",
+o:[
+"Poeta da Natureza",
+"Boca do Inferno",
+"Poeta Romântico",
+"Autor Neoclássico"
+],
+c:1,x:"Seu apelido era 'Boca do Inferno'."
+},
+
+{
+t:"O Arcadismo surge como uma reação ao Barroco, propondo um retorno à simplicidade e à harmonia com a natureza. Assinale a alternativa que melhor representa esse movimento:",
+o:[
+"Valorização da vida urbana",
+"Exaltação da natureza e da simplicidade",
+"Uso de linguagem complexa e rebuscada",
+"Foco em conflitos religiosos"
+],
+c:1,x:"Arcadismo valoriza simplicidade."
+},
+
+{
+t:"O conceito de 'Carpe Diem', presente no Arcadismo, expressa uma filosofia de vida baseada em:",
+o:[
+"Planejar o futuro detalhadamente",
+"Aproveitar intensamente o momento presente",
+"Valorizar apenas o passado",
+"Evitar prazeres"
+],
+c:1,x:"Significa aproveitar o presente."
+},
+
+{
+t:"O bucolismo, característica marcante do Arcadismo, refere-se:",
+o:[
+"À vida nas cidades",
+"À idealização da vida no campo",
+"À tecnologia",
+"À crítica política"
+],
+c:1,x:"Bucolismo valoriza a vida rural."
+},
+
+// ================= GÊNEROS TEXTUAIS =================
+
+{
+t:"O artigo de opinião é um gênero textual amplamente utilizado na mídia. Ele se caracteriza por apresentar:",
+o:[
+"Apenas dados objetivos",
+"Uma opinião defendida por argumentos",
+"Narração de fatos fictícios",
+"Descrição de objetos"
+],
+c:1,x:"É um texto argumentativo."
+},
+
+{
+t:"A sinopse é um gênero textual muito presente em livros e filmes. Sua principal função é:",
+o:[
+"Criticar a obra",
+"Resumir o conteúdo principal",
+"Contar a história completa",
+"Analisar personagens"
+],
+c:1,x:"Sinopse é um resumo."
+},
+
+{
+t:"A charge é um gênero textual que combina linguagem verbal e não verbal. Seu principal objetivo é:",
+o:[
+"Narrar uma história longa",
+"Criticar situações sociais com humor",
+"Explicar regras gramaticais",
+"Descrever ambientes"
+],
+c:1,x:"Charge faz crítica com humor."
+},
+
+{
+t:"Os manuais de instrução são textos que têm como finalidade principal:",
+o:[
+"Emocionar o leitor",
+"Ensinar procedimentos de forma clara",
+"Criticar produtos",
+"Narrar histórias"
+],
+c:1,x:"Manual orienta o usuário."
+},
+
+{
+t:"Entre os gêneros textuais, aquele que apresenta linguagem objetiva e direta, com foco em orientar ações, é:",
+o:[
+"Charge",
+"Manual de instrução",
+"Poema",
+"Crônica"
+],
+c:1,x:"Manual é objetivo e instrucional."
+},
+
+// ================= GRAMÁTICA =================
+
+{
+t:"Na frase 'Há muitos problemas sociais', o verbo 'haver' deve permanecer no singular porque:",
+o:[
+"Concorda com o sujeito",
+"É impessoal e indica existência",
+"Está incorreto",
+"Refere-se ao plural"
+],
+c:1,x:"Verbo 'haver' é impessoal."
+},
+
+{
+t:"Na frase 'Faz dois anos que estudo aqui', o verbo 'fazer' está no singular porque:",
+o:[
+"Concorda com o sujeito",
+"Indica tempo decorrido",
+"Está incorreto",
+"Refere-se ao plural"
+],
+c:1,x:"Indica tempo, sendo impessoal."
+},
+
+{
+t:"O sujeito inexistente ocorre em frases como:",
+o:[
+"Maria estuda muito",
+"Eles chegaram cedo",
+"Choveu ontem",
+"Nós viajamos"
+],
+c:2,x:"Fenômenos naturais não têm sujeito."
+},
+
+{
+t:"Na frase 'Ela está feliz', o predicado é classificado como:",
+o:[
+"Verbal",
+"Nominal",
+"Misto",
+"Inexistente"
+],
+c:1,x:"Predicado nominal indica estado."
+},
+
+{
+t:"O predicado verbal caracteriza-se por indicar:",
+o:[
+"Estado do sujeito",
+"Ação praticada pelo sujeito",
+"Qualidade",
+"Nada"
+],
+c:1,x:"Predicado verbal indica ação."
+},
+
+// ================= FUNÇÕES DA LINGUAGEM =================
+
+{
+t:"A função referencial da linguagem é utilizada quando o objetivo principal é:",
+o:[
+"Emocionar",
+"Informar de forma objetiva",
+"Convencer",
+"Manter contato"
+],
+c:1,x:"Foco na informação."
+},
+
+{
+t:"A função apelativa é comum em propagandas porque busca:",
+o:[
+"Informar",
+"Convencer o receptor",
+"Narrar",
+"Descrever"
+],
+c:1,x:"Persuadir o leitor."
+},
+
+{
+t:"A função metalinguística ocorre quando:",
+o:[
+"A linguagem fala de si mesma",
+"O texto narra fatos",
+"O texto emociona",
+"O texto descreve"
+],
+c:0,x:"Explica a própria linguagem."
+},
+
+{
+t:"A função fática tem como principal objetivo:",
+o:[
+"Informar",
+"Manter o contato comunicativo",
+"Convencer",
+"Descrever"
+],
+c:1,x:"Mantém a comunicação."
+},
+
+{
+t:"A função poética valoriza:",
+o:[
+"A informação",
+"A forma da mensagem",
+"O tempo",
+"O erro"
+],
+c:1,x:"Foco na estética."
+},
+
+// ================= TEXTO LITERÁRIO X NÃO LITERÁRIO =================
+
+{
+t:"Os textos literários diferenciam-se dos não literários principalmente porque:",
+o:[
+"São sempre objetivos",
+"Utilizam linguagem estética e subjetiva",
+"Não seguem regras",
+"Não possuem sentido"
+],
+c:1,x:"Literário é subjetivo."
+},
+
+{
+t:"Textos não literários têm como principal característica:",
+o:[
+"Uso de metáforas",
+"Linguagem objetiva e informativa",
+"Subjetividade",
+"Emoção"
+],
+c:1,x:"São informativos."
+},
+
+{
+t:"Um exemplo de texto não literário é:",
+o:[
+"Poema",
+"Romance",
+"Manual de instrução",
+"Conto"
+],
+c:2,x:"Manual é não literário."
+},
+
+{
+t:"A principal função do texto literário é:",
+o:[
+"Informar",
+"Transmitir dados",
+"Produzir efeito estético",
+"Explicar regras"
+],
+c:2,x:"Busca estética."
+},
+
+{
+t:"A diferença entre literário e não literário está relacionada principalmente:",
+o:[
+"Ao tamanho do texto",
+"Ao uso da linguagem",
+"Ao autor",
+"À quantidade de palavras"
+],
+c:1,x:"Diferença está na linguagem."
+},
+
+// ================= EXTRA PARA COMPLETAR 30 =================
+
+{
+t:"O uso de linguagem subjetiva está mais presente em:",
+o:["Texto técnico","Texto literário","Manual","Notícia"],
+c:1,x:"Subjetividade é do literário."
+},
+
+{
+t:"O uso de linguagem objetiva está presente em:",
+o:["Poema","Crônica","Manual","Romance"],
+c:2,x:"Manual é objetivo."
+},
+
+{
+t:"A linguagem denotativa é caracterizada por:",
+o:["Sentido figurado","Sentido literal","Ambiguidade","Ironia"],
+c:1,x:"Denotativo é literal."
+},
+
+{
+t:"A linguagem conotativa é caracterizada por:",
+o:["Sentido literal","Sentido figurado","Erro","Regra"],
+c:1,x:"Conotativo é figurado."
+},
+
+{
+t:"A comunicação eficiente depende:",
+o:["Só do emissor","Só do receptor","De todos os elementos da comunicação","Do acaso"],
+c:2,x:"Depende de todos."
+}
+
+];
+
+/* ================= SISTEMA ================= */
+
+function iniciar(){
+nome=document.getElementById("nome").value;
+if(!nome)return alert("Digite nome");
+
+document.getElementById("inicio").style.display="none";
+document.getElementById("quiz").style.display="block";
+
+carregar();
+}
+
+function carregar(){
+if(i>=banco.length)return fim();
+
+let q=banco[i];
+
+document.getElementById("progresso").innerText=
+`Questão ${i+1} de ${banco.length}`;
+
+document.getElementById("p").innerText=q.t;
+
+let html="";
+q.o.forEach((o,idx)=>{
+html+=`<div class="opcao" onclick="responder(${idx})">${o}</div>`;
+});
+
+document.getElementById("op").innerHTML=html;
+document.getElementById("exp").innerText="";
+}
+
+function responder(e){
+if(respondido)return;
+respondido=true;
+
+let q=banco[i];
+let ops=document.querySelectorAll(".opcao");
+
+ops[q.c].classList.add("certa");
+if(e!==q.c)ops[e].classList.add("errada");
+else pontos++;
+
+respostas.push({q:q.t,r:e,c:q.c,x:q.x,o:q.o});
+
+document.getElementById("exp").innerText=q.x;
+}
+
+function prox(){
+respondido=false;
+i++;
+carregar();
+}
+
+function fim(){
+document.getElementById("quiz").style.display="none";
+document.getElementById("final").style.display="block";
+
+salvarRanking();
+mostrarRanking();
+
+document.getElementById("res").innerText=
+`${nome} acertou ${pontos}/${banco.length}`;
+}
+
+/* ================= RANKING ================= */
+
+function salvarRanking(){
+let r=JSON.parse(localStorage.getItem("rank"))||[];
+r.push({n:nome,p:pontos});
+localStorage.setItem("rank",JSON.stringify(r));
+}
+
+function mostrarRanking(){
+let r=JSON.parse(localStorage.getItem("rank"))||[];
+r.sort((a,b)=>b.p-a.p);
+
+document.getElementById("ranking").innerHTML=
+r.map((x,i)=>`${i+1}º - ${x.n} (${x.p})`).join("<br>");
+}
+
+/* ================= PDF CORRIGIDO ================= */
+
+function gerarPDF(){
+const {jsPDF}=window.jspdf;
+let doc=new jsPDF();
+
+let largura = 180;
+let y = 10;
+
+doc.setFontSize(12);
+
+// título
+doc.setFont("helvetica","bold");
+doc.text(`Aluno: ${nome}`,10,y);
+y+=10;
+
+doc.setFont("helvetica","normal");
+
+respostas.forEach((r,i)=>{
+
+let texto = `${i+1}) ${r.q}
+Sua resposta: ${r.o[r.r]}
+Resposta correta: ${r.o[r.c]}
+Explicação: ${r.x}`;
+
+// quebra automática
+let linhas = doc.splitTextToSize(texto, largura);
+
+// quebra de página antes de escrever
+if(y + (linhas.length * 7) > 280){
+doc.addPage();
+y = 10;
+}
+
+doc.text(linhas,10,y);
+
+y += linhas.length * 7 + 5;
+
+});
+
+doc.save("resultado.pdf");
+}
+
+</script>
+
+</body>
+</html>
