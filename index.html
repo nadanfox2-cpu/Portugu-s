@@ -499,29 +499,43 @@ document.getElementById("quiz").style.display="block";
 
 carregar();
 }
-
-function responder(e){
-if(respondido)return;
-
-respondido=true;
+function carregar(){
+if(i>=banco.length)return fim();
 
 let q=banco[i];
-let ops=document.querySelectorAll(".opcao");
 
-ops[q.c].classList.add("certa");
+document.getElementById("progresso").innerText=
+`Questão ${i+1} de ${banco.length}`;
 
-if(e!==q.c){
-  ops[e].classList.add("errada");
+document.getElementById("p").innerText=q.t;
+
+let html="";
+q.o.forEach((o,idx)=>{
+html+=`<div class="opcao" onclick="responder(${idx})">${o}</div>`;
+});
+
+document.getElementById("op").innerHTML=html;
+document.getElementById("exp").innerText="";
+
+// 🔥 RESTAURAR RESPOSTA SE JÁ EXISTIR
+let respAnterior = respostas[i];
+
+if(respAnterior){
+  respondido = true;
+
+  let ops = document.querySelectorAll(".opcao");
+
+  ops[respAnterior.c].classList.add("certa");
+
+  if(respAnterior.r !== respAnterior.c){
+    ops[respAnterior.r].classList.add("errada");
+  }
+
+  document.getElementById("exp").innerText = respAnterior.x;
 }else{
-  pontos++;
+  respondido = false;
 }
-
-// 🔥 SALVAR NA POSIÇÃO CORRETA (não usar push)
-respostas[i] = {q:q.t,r:e,c:q.c,x:q.x,o:q.o};
-
-document.getElementById("exp").innerText=q.x;
 }
-
 function responder(e){
 if(respondido)return;
 respondido=true;
@@ -533,8 +547,7 @@ ops[q.c].classList.add("certa");
 if(e!==q.c)ops[e].classList.add("errada");
 else pontos++;
 
-respostas.push({q:q.t,r:e,c:q.c,x:q.x,o:q.o});
-
+respostas[i] = {q:q.t,r:e,c:q.c,x:q.x,o:q.o};
 document.getElementById("exp").innerText=q.x;
 }
 
@@ -548,7 +561,6 @@ function voltar(){
 if(i<=0)return;
 
 i--;
-respondido = true; // já foi respondida
 carregar();
 }
 
@@ -574,19 +586,20 @@ db.ref("ranking").push({
 }
 
 function mostrarRanking(){
-db.ref("ranking").on("value",(snapshot)=>{
+  db.ref("ranking").off(); // 🔥 evita múltiplos listeners
 
-let dados = snapshot.val() || {};
-let lista = Object.values(dados);
+  db.ref("ranking").on("value",(snapshot)=>{
 
-lista.sort((a,b)=>b.pontos-a.pontos);
+    let dados = snapshot.val() || {};
+    let lista = Object.values(dados);
 
-document.getElementById("ranking").innerHTML =
-lista.map((x,i)=>`${i+1}º - ${x.nome} (${x.pontos})`).join("<br>");
+    lista.sort((a,b)=>b.pontos-a.pontos);
 
-});
+    document.getElementById("ranking").innerHTML =
+      lista.map((x,i)=>`${i+1}º - ${x.nome} (${x.pontos})`).join("<br>");
+
+  });
 }
-
 /* ================= PDF ================= */
 
 function gerarPDF(){
@@ -618,6 +631,7 @@ y+=linhas.length*7+5;
 
 doc.save("resultado.pdf");
 }
+mostrarRanking();
 
 </script>
 
