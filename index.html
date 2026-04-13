@@ -543,11 +543,17 @@ carregar();
 
 function voltar(){
 if(i<=0)return;
-i--;
-respostas.pop();
-carregar();
+
+let ultima = respostas.pop(); // pega a última resposta
+
+if(ultima && ultima.r === ultima.c){
+  pontos--; // remove ponto se tinha acertado
 }
 
+i--;
+respondido=false;
+carregar();
+}
 function fim(){
 document.getElementById("quiz").style.display="none";
 document.getElementById("final").style.display="block";
