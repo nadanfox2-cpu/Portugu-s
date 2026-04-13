@@ -544,15 +544,10 @@ carregar();
 function voltar(){
 if(i<=0)return;
 
-let ultima = respostas.pop(); // pega a última resposta
-
-if(ultima && ultima.r === ultima.c){
-  pontos--; // remove ponto se tinha acertado
-}
-
 i--;
-respondido=false;
+respondido = true; // já foi respondida
 carregar();
+}
 }
 function fim(){
 document.getElementById("quiz").style.display="none";
