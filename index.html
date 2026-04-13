@@ -500,23 +500,26 @@ document.getElementById("quiz").style.display="block";
 carregar();
 }
 
-function carregar(){
-if(i>=banco.length)return fim();
+function responder(e){
+if(respondido)return;
+
+respondido=true;
 
 let q=banco[i];
+let ops=document.querySelectorAll(".opcao");
 
-document.getElementById("progresso").innerText=
-`Questão ${i+1} de ${banco.length}`;
+ops[q.c].classList.add("certa");
 
-document.getElementById("p").innerText=q.t;
+if(e!==q.c){
+  ops[e].classList.add("errada");
+}else{
+  pontos++;
+}
 
-let html="";
-q.o.forEach((o,idx)=>{
-html+=`<div class="opcao" onclick="responder(${idx})">${o}</div>`;
-});
+// 🔥 SALVAR NA POSIÇÃO CORRETA (não usar push)
+respostas[i] = {q:q.t,r:e,c:q.c,x:q.x,o:q.o};
 
-document.getElementById("op").innerHTML=html;
-document.getElementById("exp").innerText="";
+document.getElementById("exp").innerText=q.x;
 }
 
 function responder(e){
