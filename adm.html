@@ -19,6 +19,7 @@ justify-content:center;
 padding:10px;
 margin:0;
 }
+
 .card{
 width:100%;
 max-width:600px;
@@ -27,6 +28,7 @@ padding:20px;
 border-radius:15px;
 box-shadow:0 0 15px red;
 }
+
 button{
 width:100%;
 padding:14px;
@@ -37,6 +39,7 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 }
+
 input{
 width:100%;
 padding:12px;
@@ -53,24 +56,24 @@ border:none;
 
 <h2>Área Administrativa</h2>
 
-<!-- LOGIN -->
 <input id="senha" placeholder="Senha">
+
+<!-- 🔥 BOTÃO COM ID -->
 <button id="btnEntrar" onclick="login()">Entrar</button>
 
-<!-- PAINEL -->
 <div id="painel" style="display:none">
-  <h3>Ranking</h3>
-  <div id="rank"></div>
+<h3>Ranking</h3>
+<div id="rank"></div>
 
-  <button onclick="limpar()">Limpar Ranking</button>
-  <button onclick="voltar()">Voltar</button>
+<button onclick="limpar()">Limpar Ranking</button>
+<button onclick="voltar()">Voltar</button>
 </div>
 
 </div>
 
 <script>
 
-// 🔥 FIREBASE CONFIG
+/* 🔥 CONFIG FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -84,7 +87,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 🔐 LOGIN
+/* 🔥 LOGIN */
 function login(){
   let s=document.getElementById("senha").value;
 
@@ -93,16 +96,16 @@ function login(){
     return;
   }
 
+  // mostra painel
   document.getElementById("painel").style.display="block";
 
-  // 🔥 esconder botão e input
+  // 🔥 ESCONDE BOTÃO
   document.getElementById("btnEntrar").style.display="none";
-  document.getElementById("senha").style.display="none";
 
   mostrar();
 }
 
-// 📊 MOSTRAR RANKING
+/* 🔥 MOSTRAR RANKING */
 function mostrar(){
   db.ref("ranking").on("value",(snapshot)=>{
 
@@ -117,12 +120,12 @@ function mostrar(){
   });
 }
 
-// 🧨 LIMPAR
+/* 🔥 LIMPAR */
 function limpar(){
   db.ref("ranking").remove();
 }
 
-// 🔙 VOLTAR
+/* 🔥 VOLTAR */
 function voltar(){
   window.location.href="index.html";
 }
