@@ -59,7 +59,7 @@ border:none;
 <input id="senha" placeholder="Senha">
 
 <!-- 🔥 BOTÃO COM ID -->
-<button id="btnEntrar" onclick="login()">Entrar</button>
+<button id="btnEntrar">Entrar</button>
 
 <div id="painel" style="display:none">
 <h3>Ranking</h3>
@@ -87,26 +87,34 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+/* 🔥 EVENTO DO BOTÃO (mais seguro que onclick) */
+document.getElementById("btnEntrar").addEventListener("click", login);
+
 /* 🔥 LOGIN */
 function login(){
-  let s=document.getElementById("senha").value;
+  let s = document.getElementById("senha").value;
 
-  if(s!="2821"){
+  if(s !== "2821"){
     alert("Senha errada");
     return;
   }
 
   // mostra painel
-  document.getElementById("painel").style.display="block";
+  document.getElementById("painel").style.display = "block";
 
   // 🔥 ESCONDE BOTÃO
-  document.getElementById("btnEntrar").style.display="none";
+  document.getElementById("btnEntrar").style.display = "none";
+
+  // 🔥 OPCIONAL: esconder campo senha também
+  document.getElementById("senha").style.display = "none";
 
   mostrar();
 }
 
-/* 🔥 MOSTRAR RANKING */
+/* 🔥 RANKING AO VIVO */
 function mostrar(){
+  db.ref("ranking").off(); // evita bug
+
   db.ref("ranking").on("value",(snapshot)=>{
 
     let dados = snapshot.val() || {};
@@ -120,14 +128,14 @@ function mostrar(){
   });
 }
 
-/* 🔥 LIMPAR */
+/* 🔥 LIMPAR RANKING */
 function limpar(){
   db.ref("ranking").remove();
 }
 
 /* 🔥 VOLTAR */
 function voltar(){
-  window.location.href="index.html";
+  window.location.href = "index.html";
 }
 
 </script>
