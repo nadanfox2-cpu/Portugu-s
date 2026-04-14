@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Área ADM</title>
+
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -17,16 +19,14 @@ justify-content:center;
 padding:10px;
 margin:0;
 }
-
 .card{
 width:100%;
 max-width:600px;
 background:#0b0b0b;
 padding:20px;
 border-radius:15px;
-box-shadow:0 0 15px rgb(255, 0, 0);
+box-shadow:0 0 15px red;
 }
-
 button{
 width:100%;
 padding:14px;
@@ -37,6 +37,13 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 }
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:none;
+}
 </style>
 </head>
 
@@ -46,20 +53,24 @@ cursor:pointer;
 
 <h2>Área Administrativa</h2>
 
+<!-- LOGIN -->
 <input id="senha" placeholder="Senha">
-<button onclick="login()">Entrar</button>
+<button id="btnEntrar" onclick="login()">Entrar</button>
 
+<!-- PAINEL -->
 <div id="painel" style="display:none">
-<h3>Ranking</h3>
-<div id="rank"></div>
+  <h3>Ranking</h3>
+  <div id="rank"></div>
 
-<button onclick="limpar()">Limpar Ranking</button>
-<button onclick="voltar()">Voltar</button>
+  <button onclick="limpar()">Limpar Ranking</button>
+  <button onclick="voltar()">Voltar</button>
 </div>
 
 </div>
 
 <script>
+
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -72,18 +83,26 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+// 🔐 LOGIN
 function login(){
-let s=document.getElementById("senha").value;
+  let s=document.getElementById("senha").value;
 
-if(s!="2821"){
-alert("Senha errada");
-return;
+  if(s!="2821"){
+    alert("Senha errada");
+    return;
+  }
+
+  document.getElementById("painel").style.display="block";
+
+  // 🔥 esconder botão e input
+  document.getElementById("btnEntrar").style.display="none";
+  document.getElementById("senha").style.display="none";
+
+  mostrar();
 }
 
-document.getElementById("painel").style.display="block";
-mostrar();
-}
-
+// 📊 MOSTRAR RANKING
 function mostrar(){
   db.ref("ranking").on("value",(snapshot)=>{
 
@@ -98,11 +117,14 @@ function mostrar(){
   });
 }
 
+// 🧨 LIMPAR
 function limpar(){
   db.ref("ranking").remove();
 }
+
+// 🔙 VOLTAR
 function voltar(){
-window.location.href="index.html";
+  window.location.href="index.html";
 }
 
 </script>
