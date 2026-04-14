@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Área ADM</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <style>
 body{
@@ -58,7 +60,18 @@ cursor:pointer;
 </div>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
+  authDomain: "simulado1.firebaseapp.com",
+  databaseURL: "https://simulado1-default-rtdb.firebaseio.com",
+  projectId: "simulado1",
+  storageBucket: "simulado1.firebasestorage.app",
+  messagingSenderId: "625344929823",
+  appId: "1:625344929823:web:2a64283815450a7af7b52a"
+};
 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 function login(){
 let s=document.getElementById("senha").value;
 
@@ -72,18 +85,22 @@ mostrar();
 }
 
 function mostrar(){
-let r=JSON.parse(localStorage.getItem("rank"))||[];
-r.sort((a,b)=>b.p-a.p);
+  db.ref("ranking").on("value",(snapshot)=>{
 
-document.getElementById("rank").innerHTML=
-r.map((x,i)=>`${i+1}º ${x.n} - ${x.p}`).join("<br>");
+    let dados = snapshot.val() || {};
+    let lista = Object.values(dados);
+
+    lista.sort((a,b)=>b.pontos-a.pontos);
+
+    document.getElementById("rank").innerHTML =
+      lista.map((x,i)=>`${i+1}º ${x.nome} - ${x.pontos}`).join("<br>");
+
+  });
 }
 
 function limpar(){
-localStorage.removeItem("rank");
-mostrar();
+  db.ref("ranking").remove();
 }
-
 function voltar(){
 window.location.href="index.html";
 }
