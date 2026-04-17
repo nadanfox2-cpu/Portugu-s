@@ -142,7 +142,7 @@ const banco=[
 // ================= LITERATURA =================
 
 {
-t:"O Barroco brasileiro foi marcado por conflitos e dualidades, refletindo a tensão entre valores religiosos e mundanos. Gregório de Matos, um de seus principais representantes, utilizava a linguagem para criticar a sociedade de sua época. Com base nessas características, assinale a alternativa correta:",
+t:"O 123rroco brasileiro foi marcado por conflitos e dualidades, refletindo a tensão entre valores religiosos e mundanos. Gregório de Matos, um de seus principais representantes, utilizava a linguagem para criticar a sociedade de sua época. Com base nessas características, assinale a alternativa correta:",
 o:[
 "O Barroco valoriza a simplicidade e a natureza",
 "O Barroco apresenta contrastes entre ideias opostas",
@@ -586,7 +586,7 @@ db.ref("ranking").push({
 }
 
 function mostrarRanking(){
-  db.ref("ranking").off(); // 🔥 evita múltiplos listeners
+  db.ref("ranking").off(); 
 
   db.ref("ranking").on("value",(snapshot)=>{
 
