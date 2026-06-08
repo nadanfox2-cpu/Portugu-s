@@ -8,7 +8,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -95,7 +94,7 @@ font-weight:bold;
 <div id="final">
 <h2>Resultado Final</h2>
 <p id="res"></p>
-<h3>🏆 Ranking Geral</h3>
+<h3> Ranking Geral</h3>
 <div id="ranking"></div>
 <button onclick="reiniciar()">Reiniciar Prova</button>
 <button onclick="gerarPDF()">Baixar PDF</button>
@@ -105,7 +104,6 @@ font-weight:bold;
 
 <script>
 
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -119,7 +117,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* ================= SISTEMA ================= */
 
 let nome="",i=0,pontos=0,respostas=[],respondido=false;
 
@@ -349,7 +346,6 @@ x:"Se a base for maior que 1, a função cresce.\n\nSe for entre 0 e 1, ela decr
 
 ];
 
-/* ================= QUIZ ================= */
 
 function iniciar(){
 nome=document.getElementById("nome").value;
@@ -378,7 +374,7 @@ html+=`<div class="opcao" onclick="responder(${idx})">${o}</div>`;
 document.getElementById("op").innerHTML=html;
 document.getElementById("exp").innerText="";
 
-// 🔥 RESTAURAR RESPOSTA SE JÁ EXISTIR
+
 let respAnterior = respostas[i];
 
 if(respAnterior){
@@ -436,8 +432,6 @@ document.getElementById("res").innerText=
 `${nome} acertou ${pontos}/${banco.length}`;
 }
 
-/* ================= 🔥 RANKING ONLINE ================= */
-
 function salvarRanking(){
 db.ref("ranking").push({
   nome: nome,
@@ -461,7 +455,7 @@ function mostrarRanking(){
 
   });
 }
-/* ================= PDF ================= */
+
 
 function gerarPDF(){
 const {jsPDF}=window.jspdf;
