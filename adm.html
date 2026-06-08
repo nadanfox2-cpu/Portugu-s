@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Área ADM</title>
-
-<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -58,7 +56,7 @@ input{
 
 <input id="senha" placeholder="Senha">
 
-<!-- 🔥 BOTÃO COM ID -->
+
 <button id="btnEntrar">Entrar</button>
 
 <div id="painel" style="display:none">
@@ -73,7 +71,7 @@ input{
 
 <script>
 
-/* 🔥 CONFIG FIREBASE */
+
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -86,11 +84,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
-/* 🔥 EVENTO DO BOTÃO (mais seguro que onclick) */
 document.getElementById("btnEntrar").addEventListener("click", login);
 
-/* 🔥 LOGIN */
 function login(){
   let s = document.getElementById("senha").value;
 
@@ -99,21 +94,18 @@ function login(){
     return;
   }
 
-  // mostra painel
-  document.getElementById("painel").style.display = "block";
 
-  // 🔥 ESCONDE BOTÃO
+  document.getElementById("painel").style.display = "block"
   document.getElementById("btnEntrar").style.display = "none";
 
-  // 🔥 OPCIONAL: esconder campo senha também
   document.getElementById("senha").style.display = "none";
 
   mostrar();
 }
 
-/* 🔥 RANKING AO VIVO */
+
 function mostrar(){
-  db.ref("ranking").off(); // evita bug
+  db.ref("ranking").off(); 
 
   db.ref("ranking").on("value",(snapshot)=>{
 
@@ -128,12 +120,11 @@ function mostrar(){
   });
 }
 
-/* 🔥 LIMPAR RANKING */
+
 function limpar(){
   db.ref("ranking").remove();
 }
 
-/* 🔥 VOLTAR */
 function voltar(){
   window.location.href = "index.html";
 }
