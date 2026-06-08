@@ -7,7 +7,6 @@
 <title>Simulado</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -51,6 +50,8 @@ margin-top:10px;
 font-size:16px;
 border:none;
 outline:none;
+background:#111;
+color:#fff;
 }
 .opcao{
 padding:14px;
@@ -60,13 +61,21 @@ border:1px solid #222;
 border-radius:10px;
 cursor:pointer;
 }
-.certa{background:green;}
-.errada{background:darkred;}
+.certa{background:green !important;}
+.errada{background:darkred !important;}
 #quiz,#final{display:none;}
 #progresso{
 margin-bottom:10px;
 color:#ff4d4d;
 font-weight:bold;
+}
+#exp {
+margin-top:15px;
+background:#1a1a1a;
+padding:10px;
+border-radius:8px;
+border-left:4px solid red;
+white-space: pre-line;
 }
 </style>
 </head>
@@ -76,7 +85,7 @@ font-weight:bold;
 <div class="card">
 
 <div id="inicio">
-<h2>Simulada Matemática</h2>
+<h2>Simulado Matemática</h2>
 <input id="nome" placeholder="Seu nome">
 <button onclick="iniciar()">Iniciar Prova</button>
 <button onclick="window.location.href='adm.html'">Área ADM</button>
@@ -84,7 +93,7 @@ font-weight:bold;
 
 <div id="quiz">
 <div id="progresso"></div>
-<h2 id="p"></h2>
+<div id="p"></div> 
 <div id="op"></div>
 <p id="exp"></p>
 <button onclick="prox()">Próxima</button>
@@ -94,7 +103,7 @@ font-weight:bold;
 <div id="final">
 <h2>Resultado Final</h2>
 <p id="res"></p>
-<h3> Ranking Geral</h3>
+<h3>Ranking Geral</h3>
 <div id="ranking"></div>
 <button onclick="reiniciar()">Reiniciar Prova</button>
 <button onclick="gerarPDF()">Baixar PDF</button>
@@ -103,7 +112,6 @@ font-weight:bold;
 </div>
 
 <script>
-
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -117,219 +125,29 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+let nome="", i=0, pontos=0, respostas=[], respondido=false;
 
-let nome="",i=0,pontos=0,respostas=[],respondido=false;
-
-function reiniciar(){
-i=0;
-pontos=0;
-respostas=[];
-respondido=false;
-
-document.getElementById("final").style.display="none";
-document.getElementById("quiz").style.display="none";
-document.getElementById("inicio").style.display="block";
-document.getElementById("nome").value="";
-}
-
-/* ================= QUESTÕES ================= */
-
+// Coloque todas as suas outras questões aqui seguindo este padrão de objeto
 const banco = [
   {
-    t: "Para resolver, transformamos 8 em potência de base 2. Sabemos que 8 = 2³. Então igualamos os expoentes: x = 3.",
-    o: ["2", "3", "4", "5"],
-    c: 1,
-    x: "Como 8 = 2³, temos 2^x = 2³. Portanto, x = 3.",
+    t: "Resolva a equação exponencial: 2^x = 8",
+    o: ["2", "3", "4", "1"],
+    c: 1, 
+    x: "Para resolver, transformamos 8 em potência de base 2.\n\nSabemos que 8 = 2³.\n\nEntão igualamos os expoentes: x = 3.",
     imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
   },
   {
-    t: "Qual é a principal característica da função exponencial?",
-    o: [
-      "Cresce ou decresce rapidamente",
-      "É sempre constante",
-      "Forma uma reta",
-      "Não varia"
-    ],
+    t: "Qual é a principal characteristic da função exponencial?",
+    o: ["Cresce ou decresce rapidamente", "É sempre constante", "Forma uma reta", "Não varia"],
     c: 0,
-    x: "A função exponencial cresce ou decresce rapidamente.\n\nIsso acontece porque o número está no expoente.\n\nPequenas variações geram grandes resultados.",
+    x: "A função exponencial cresce ou decresce rapidamente.\n\nIsso acontece porque o número está no expoente.",
     imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "Uma bactéria dobra a cada hora. Começando com 1 bactéria, quantas haverá após 3 horas?",
-    o: ["6", "8", "4", "2"],
-    c: 1,
-    x: "A quantidade dobra a cada hora.\n\nApós 1h: 2\nApós 2h: 4\nApós 3h: 8\n\nLogo, o resultado é 8.",
-    imagem: "https://images.unsplash.com/photo-1532187863486-abf9d39d6618?w=500"
-  },
-  {
-    t: "O gráfico da função exponencial y = 2^x é:",
-    o: [
-      "Uma reta",
-      "Uma curva crescente",
-      "Uma parábola",
-      "Uma linha horizontal"
-    ],
-    c: 1,
-    x: "A função exponencial forma uma curva.\n\nComo a base é maior que 1, ela cresce.\n\nPortanto, é uma curva crescente.",
-    imagem: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500"
-  },
-  {
-    t: "Quando a base da função exponencial está entre 0 e 1, o gráfico é:",
-    o: ["Crescente", "Decrescente", "Constante", "Linear"],
-    c: 1,
-    x: "Se a base está entre 0 e 1, a função diminui.\n\nOu seja, o gráfico é decrescente.\n\nExemplo: y = (1/2)^x.",
-    imagem: "https://images.unsplash.com/photo-1453733190148-c44698c265f8?w=500"
-  },
-  {
-    t: "Qual o valor de 2^4?",
-    o: ["8", "16", "12", "10"],
-    c: 1,
-    x: "Multiplicamos 2 por ele mesmo 4 vezes.\n\n2 × 2 × 2 × 2 = 16.\n\nLogo, o resultado é 16.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
-  },
-  {
-    t: "Qual é a valor de log₁₀(100)?",
-    o: ["1", "2", "10", "100"],
-    c: 1,
-    x: "Logaritmo pergunta: 10 elevado a quanto dá 100?\n\nSabemos que 10² = 100.\n\nEntão, o resultado é 2.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "log(a × b) é igual a:",
-    o: [
-      "log a + log b",
-      "log a - log b",
-      "log(a/b)",
-      "log(a²)"
-    ],
-    c: 0,
-    x: "Uma propriedade importante diz:\n\nlog(a × b) = log a + log b.\n\nOu seja, multiplicação vira soma.",
-    imagem: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500"
-  },
-  {
-    t: "log(a/b) é igual a:",
-    o: [
-      "log a + log b",
-      "log a - log b",
-      "log(ab)",
-      "log a²"
-    ],
-    c: 1,
-    x: "Outra propriedade importante:\n\nlog(a/b) = log a - log b.\n\nDivisão vira subtração.",
-    imagem: "https://images.unsplash.com/photo-1453733190148-c44698c265f8?w=500"
-  },
-  {
-    t: "Resolva: log₁₀(x) = 2",
-    o: ["10", "100", "2", "20"],
-    c: 1,
-    x: "Transformamos em forma exponencial.\n\n10² = x.\n\nLogo, x = 100.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "Resolva: log₂(x) = 3",
-    o: ["6", "8", "9", "4"],
-    c: 1,
-    x: "Forma exponencial:\n\n2³ = x.\n\nLogo, x = 8.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
-  },
-  {
-    t: "Para que servem os logaritmos?",
-    o: [
-      "Somar números",
-      "Resolver exponenciais",
-      "Dividir números",
-      "Subtrair valores"
-    ],
-    c: 1,
-    x: "Os logaritmos ajudam a resolver equações exponenciais.\n\nEles transformam potência em multiplicação.\n\nFacilitando cálculos complexos.",
-    imagem: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500"
-  },
-  {
-    t: "Qual o valor de log₁₀(1000)?",
-    o: ["2", "3", "10", "1"],
-    c: 1,
-    x: "Pergunta: 10 elevado a quanto dá 1000?\n\nSabemos que 10³ = 1000.\n\nEntão o resultado é 3.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "Resolva: 2^x = 32",
-    o: ["3", "4", "5", "6"],
-    c: 2,
-    x: "Transformamos 32 em potência de 2.\n\n32 = 2⁵.\n\nLogo, x = 5.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
-  },
-  {
-    t: "A função logarítmica é o inverso de qual função?",
-    o: [
-      "Linear",
-      "Quadrática",
-      "Exponencial",
-      "Constante"
-    ],
-    c: 2,
-    x: "A função logarítmica desfaz a exponencial.\n\nOu seja, elas são inversas.\n\nUma desfaz o efeito da outra.",
-    imagem: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500"
-  },
-  {
-    t: "O gráfico da função logarítmica é:",
-    o: [
-      "Reta",
-      "Curva crescente",
-      "Parábola",
-      "Linha horizontal"
-    ],
-    c: 1,
-    x: "A função logarítmica forma uma curva.\n\nSe a base for maior que 1, ela cresce.\n\nLogo, é crescente.",
-    imagem: "https://images.unsplash.com/photo-1453733190148-c44698c265f8?w=500"
-  },
-  {
-    t: "A função logarítmica não existe para valores de x:",
-    o: ["Negativos", "Positivos", "Maiores que 1", "Iguais a 10"],
-    c: 0,
-    x: "Logaritmo não aceita números negativos.\n\nO domínio é apenas x > 0.\n\nPor isso negativos não funcionam.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "Qual o valor de log₂(16)?",
-    o: ["2", "3", "4", "5"],
-    c: 2,
-    x: "Pergunta: 2 elevado a quanto dá 16?\n\n2⁴ = 16.\n\nLogo, o resultado é 4.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
-  },
-  {
-    t: "Qual o valor de 3^2?",
-    o: ["6", "9", "3", "12"],
-    c: 1,
-    x: "Multiplicamos 3 por ele mesmo.\n\n3 × 3 = 9.\n\nResultado: 9.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
-  },
-  {
-    t: "log₁₀(10) é:",
-    o: ["0", "1", "10", "100"],
-    c: 1,
-    x: "10¹ = 10.\n\nEntão log₁₀(10) = 1.\n\nSempre que base = número, resultado é 1.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
-  },
-  {
-    t: "A função logarítmica cresce quando:",
-    o: [
-      "Base > 1",
-      "Base < 1",
-      "Base = 0",
-      "Base negativa"
-    ],
-    c: 0,
-    x: "Se a base for maior que 1, a função cresce.\n\nSe for entre 0 e 1, ela decresce.\n\nIsso define o comportamento do gráfico.",
-    imagem: "https://images.unsplash.com/photo-1453733190148-c44698c265f8?w=500"
   }
 ];
 
-let i = 0;
-let nome = "";
-
-function iniciar() {
+function iniciar(){
   nome = document.getElementById("nome").value;
-  if (!nome) return alert("Digite seu nome");
+  if(!nome) return alert("Digite seu nome");
 
   document.getElementById("inicio").style.display = "none";
   document.getElementById("quiz").style.display = "block";
@@ -337,204 +155,144 @@ function iniciar() {
   carregar();
 }
 
-function carregar() {
-  if (i >= banco.length) return fim();
+function carregar(){
+  if(i >= banco.length) return fim();
 
   let q = banco[i];
-  let perguntaDiv = document.getElementById("pergunta");
-  
-  perguntaDiv.innerHTML = "";
+  respondido = false;
 
-  // Cria o bloco do enunciado contendo o número da questão correspondente
-  let textoEnunciado = document.createElement("p");
-  // O índice "i" começa em 0, por isso somamos 1 para mostrar "Questão 1", "Questão 2", etc.
-  textoEnunciado.innerHTML = `<strong>Questão ${i + 1}:</strong> ${q.t}`;
-  textoEnunciado.style.marginBottom = "15px";
-  perguntaDiv.appendChild(textoEnunciado);
+  // Atualiza cabeçalho do progresso
+  document.getElementById("progresso").innerText = `Questão ${i+1} de ${banco.length}`;
 
-  if (q.imagem) {
-    let imgElement = document.createElement("img");
-    imgElement.src = q.imagem;
-    imgElement.alt = `Imagem de apoio da Questão ${i + 1}`;
-    
-    imgElement.style.display = "block";
-    imgElement.style.maxWidth = "100%";
-    imgElement.style.maxHeight = "300px";
-    imgElement.style.margin = "0 auto 20px auto";
-    imgElement.style.borderRadius = "4px";
-    imgElement.style.border = "1px solid #ccc";
-    
-    perguntaDiv.appendChild(imgElement);
+  // Renderiza enunciado numerado + Imagem integrada no contêiner correto (#p)
+  let containerPergunta = document.getElementById("p");
+  containerPergunta.innerHTML = `<p><strong>Questão ${i+1}:</strong> ${q.t}</p>`;
+
+  if(q.imagem){
+    containerPergunta.innerHTML += `<img src="${q.imagem}" alt="Imagem da questão" style="display:block; max-width:100%; max-height:280px; margin:15px auto; border-radius:6px; border:1px solid #333;">`;
   }
 
-  let opcoesDiv = document.getElementById("opcoes");
-  opcoesDiv.innerHTML = "";
-
-  q.o.forEach((opcao, index) => {
-    let botao = document.createElement("button");
-    botao.innerText = opcao;
-    botao.onclick = function() { verificarResposta(index); };
-    opcoesDiv.appendChild(botao);
+  // Renderiza alternativas
+  let html = "";
+  q.o.forEach((o, idx) => {
+    html += `<div class="opcao" data-idx="${idx}" onclick="responder(${idx})">${o}</div>`;
   });
+  document.getElementById("op").innerHTML = html;
+  document.getElementById("exp").innerText = "";
+
+  // Verifica se o aluno já voltou e respondeu essa antes
+  let respAnterior = respostas[i];
+  if(respAnterior){
+    respondido = true;
+    let ops = document.querySelectorAll(".opcao");
+    ops[respAnterior.c].classList.add("certa");
+    if(respAnterior.r !== respAnterior.c){
+      ops[respAnterior.r].classList.add("errada");
+    }
+    document.getElementById("exp").innerText = respAnterior.x;
+  }
 }
 
-function verificarResposta(selecionada) {
+function responder(e){
+  if(respondido) return;
+  respondido = true;
+
   let q = banco[i];
-  if (selecionada === q.c) {
-    alert(`Questão ${i + 1} - Correto!\n\n` + q.x);
+  let ops = document.querySelectorAll(".opcao");
+
+  ops[q.c].classList.add("certa");
+  if(e !== q.c) {
+    ops[e].classList.add("errada");
   } else {
-    alert(`Questão ${i + 1} - Incorreto.\n\n` + q.x);
+    pontos++;
+  }
+
+  respostas[i] = {q: q.t, r: e, c: q.c, x: q.x, o: q.o};
+  document.getElementById("exp").innerText = q.x;
+}
+
+function prox(){
+  if(!respondido && i < banco.length) {
+    return alert("Por favor, responda a questão antes de avançar.");
   }
   i++;
   carregar();
 }
 
-function fim() {
-  document.getElementById("quiz").style.display = "none";
-  alert("Parabéns, " + nome + "! Você concluiu todas as questões do simulado.");
-}
-
-function iniciar(){
-nome=document.getElementById("nome").value;
-if(!nome)return alert("Digite nome");
-
-document.getElementById("inicio").style.display="none";
-document.getElementById("quiz").style.display="block";
-
-carregar();
-}
-function carregar(){
-if(i>=banco.length)return fim();
-
-let q=banco[i];
-
-document.getElementById("progresso").innerText=
-`Questão ${i+1} de ${banco.length}`;
-
-document.getElementById("p").innerText=q.t;
-
-let html="";
-q.o.forEach((o,idx)=>{
-html+=`<div class="opcao" onclick="responder(${idx})">${o}</div>`;
-});
-
-document.getElementById("op").innerHTML=html;
-document.getElementById("exp").innerText="";
-
-
-let respAnterior = respostas[i];
-
-if(respAnterior){
-  respondido = true;
-
-  let ops = document.querySelectorAll(".opcao");
-
-  ops[respAnterior.c].classList.add("certa");
-
-  if(respAnterior.r !== respAnterior.c){
-    ops[respAnterior.r].classList.add("errada");
-  }
-
-  document.getElementById("exp").innerText = respAnterior.x;
-}else{
-  respondido = false;
-}
-}
-function responder(e){
-if(respondido)return;
-respondido=true;
-
-let q=banco[i];
-let ops=document.querySelectorAll(".opcao");
-
-ops[q.c].classList.add("certa");
-if(e!==q.c)ops[e].classList.add("errada");
-else pontos++;
-
-respostas[i] = {q:q.t,r:e,c:q.c,x:q.x,o:q.o};
-document.getElementById("exp").innerText=q.x;
-}
-
-function prox(){
-respondido=false;
-i++;
-carregar();
-}
-
 function voltar(){
-if(i<=0)return;
-
-i--;
-carregar();
+  if(i <= 0) return;
+  i--;
+  carregar();
 }
 
 function fim(){
-document.getElementById("quiz").style.display="none";
-document.getElementById("final").style.display="block";
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("final").style.display = "block";
 
-salvarRanking();
-mostrarRanking();
+  salvarRanking();
+  mostrarRanking();
 
-document.getElementById("res").innerText=
-`${nome} acertou ${pontos}/${banco.length}`;
+  document.getElementById("res").innerText = `${nome} acertou ${pontos}/${banco.length}`;
 }
 
 function salvarRanking(){
-db.ref("ranking").push({
-  nome: nome,
-  pontos: pontos,
-  data: Date.now()
-});
+  db.ref("ranking").push({
+    nome: nome,
+    pontos: pontos,
+    data: Date.now()
+  });
 }
 
 function mostrarRanking(){
   db.ref("ranking").off(); 
-
-  db.ref("ranking").on("value",(snapshot)=>{
-
+  db.ref("ranking").orderByChild("pontos").limitToLast(10).on("value", (snapshot) => {
     let dados = snapshot.val() || {};
     let lista = Object.values(dados);
-
-    lista.sort((a,b)=>b.pontos-a.pontos);
+    
+    lista.sort((a,b) => b.pontos - a.pontos);
 
     document.getElementById("ranking").innerHTML =
-      lista.map((x,i)=>`${i+1}º - ${x.nome} (${x.pontos})`).join("<br>");
-
+      lista.map((x, idx) => `${idx+1}º - ${x.nome} (${x.pontos} acertos)`).join("<br>");
   });
 }
 
+function reiniciar(){
+  i = 0;
+  pontos = 0;
+  respostas = [];
+  respondido = false;
+
+  document.getElementById("final").style.display = "none";
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("inicio").style.display = "block";
+  document.getElementById("nome").value = "";
+}
 
 function gerarPDF(){
-const {jsPDF}=window.jspdf;
-let doc=new jsPDF();
+  const {jsPDF} = window.jspdf;
+  let doc = new jsPDF();
 
-let y=10;
-doc.text(`Aluno: ${nome}`,10,y);
-y+=10;
+  let y = 10;
+  doc.text(`Aluno: ${nome}`, 10, y);
+  y += 10;
 
-respostas.forEach((r,i)=>{
+  respostas.forEach((r, idx) => {
+    let texto = `${idx+1}) ${r.q}\nSua Resposta: ${r.o[r.r]}\nResposta Correta: ${r.o[r.c]}\nExplicação: ${r.x}`;
+    let linhas = doc.splitTextToSize(texto, 180);
 
-let texto=`${i+1}) ${r.q}
-Sua: ${r.o[r.r]}
-Correta: ${r.o[r.c]}
-Exp: ${r.x}`;
+    if(y + linhas.length * 7 > 280){
+      doc.addPage();
+      y = 10;
+    }
 
-let linhas=doc.splitTextToSize(texto,180);
+    doc.text(linhas, 10, y);
+    y += linhas.length * 7 + 5;
+  });
 
-if(y + linhas.length*7 > 280){
-doc.addPage();
-y=10;
+  doc.save("resultado.pdf");
 }
 
-doc.text(linhas,10,y);
-y+=linhas.length*7+5;
-
-});
-
-doc.save("resultado.pdf");
-}
 mostrarRanking();
-
 </script>
 
 </body>
