@@ -129,18 +129,172 @@ let nome="", i=0, pontos=0, respostas=[], respondido=false;
 
 const banco = [
   {
-    t: "Resolva a equação exponencial: 2^x = 8",
-    o: ["2", "3", "4", "1"],
-    c: 1, 
-    x: "Para resolver, transformamos 8 em potência de base 2.\n\nSabemos que 8 = 2³.\n\nEntão igualamos os expoentes: x = 3.",
-    imagem: "https://tkoc.fandom.com/pt-br/wiki/Goku"
+    t: "Aula 1 - Observe a sequência: 3, 7, 11, 15, ... Qual é o próximo número e a regularidade dessa sequência?",
+    o: ["19 (Soma-se 4)", "18 (Soma-se 3)", "20 (Multiplica-se por 2)", "16 (Soma-se 1)"],
+    c: 0, 
+    x: "Analisando a sequência, notamos que a diferença entre um termo e o anterior é sempre constante.\n\n7 - 3 = 4\n11 - 7 = 4\n\nPara achar o próximo termo, basta somar 4 ao último: 15 + 4 = 19.",
+    imagem: ""
   },
   {
-    t: "Qual é a principal characteristic da função exponencial?",
-    o: ["Cresce ou decresce rapidamente", "É sempre constante", "Forma uma reta", "Não varia"],
+    t: "Aula 2 - Qual é o 10º termo de uma Progressão Aritmética (PA) onde o primeiro termo é 2 e a razão é 3?",
+    o: ["27", "29", "30", "32"],
+    c: 1,
+    x: "Usamos a fórmula do termo geral da PA: an = a1 + (n - 1) * r\n\nSubstituindo os valores: a1 = 2, r = 3, n = 10.\n\na10 = 2 + (10 - 1) * 3\na10 = 2 + 9 * 3\na10 = 2 + 27 = 29.",
+    imagem: ""
+  },
+  {
+    t: "Aula 3 - Em uma PA, três termos consecutivos são representados por (x, 10, 14). Qual é o valor de x?",
+    o: ["4", "8", "6", "5"],
+    c: 2,
+    x: "Uma das propriedades da PA é que a diferença entre termos consecutivos é a razão.\n\nA razão é 14 - 10 = 4.\n\nComo x é o termo anterior a 10, fazemos: 10 - x = 4, logo x = 6.",
+    imagem: ""
+  },
+  {
+    t: "Aula 4 - O termo geral de uma sequência é dado por an = 5n - 2. Qual é a razão dessa Progressão Aritmética?",
+    o: ["-2", "5", "3", "2"],
+    c: 1,
+    x: "Vamos encontrar os dois primeiros termos.\nPara n = 1: a1 = 5(1) - 2 = 3.\nPara n = 2: a2 = 5(2) - 2 = 8.\n\nA razão é a diferença entre eles: r = a2 - a1 = 8 - 3 = 5.",
+    imagem: ""
+  },
+  {
+    t: "Aula 5 - Qual é a soma dos 10 primeiros termos da PA (1, 2, 3, ...)?",
+    o: ["50", "45", "60", "55"],
+    c: 3,
+    x: "Usamos a fórmula de Gauss: Sn = (a1 + an) * n / 2.\n\nO 1º termo (a1) é 1, o 10º (a10) é 10. O número de termos (n) é 10.\n\nS10 = (1 + 10) * 10 / 2\nS10 = 11 * 5 = 55.",
+    imagem: ""
+  },
+  {
+    t: "Aula 6 - A soma dos 5 primeiros números pares positivos (2, 4, 6, 8, 10) resulta em:",
+    o: ["20", "30", "40", "50"],
+    c: 1,
+    x: "Podemos somar diretamente ou usar a fórmula da PA.\n\nSomando direto: 2 + 4 + 6 + 8 + 10 = 30.\n\nPela fórmula: S5 = (2 + 10) * 5 / 2 = 12 * 5 / 2 = 60 / 2 = 30.",
+    imagem: ""
+  },
+  {
+    t: "Aula 7 - João guardou R$ 10 no primeiro dia, R$ 15 no segundo, R$ 20 no terceiro, e assim por diante. Quanto ele guardou apenas no 5º dia?",
+    o: ["35", "30", "25", "40"],
+    c: 1,
+    x: "Temos uma PA onde a1 = 10 e r = 5. Queremos o a5.\n\na5 = a1 + 4r\na5 = 10 + 4(5)\na5 = 10 + 20 = 30.",
+    imagem: ""
+  },
+  {
+    t: "Aula 8 - Se a razão (r) de uma Progressão Aritmética for igual a zero, podemos classificar essa PA como:",
+    o: ["Crescente", "Decrescente", "Constante", "Oscilante"],
+    c: 2,
+    x: "Quando a razão é zero, não somamos nem subtraímos nada ao termo anterior. Exemplo: (5, 5, 5, 5...). \n\nPortanto, os termos não mudam, fazendo dela uma PA constante.",
+    imagem: ""
+  },
+  {
+    t: "Aula 9 - Qual é a razão da Progressão Geométrica (3, 6, 12, 24, ...)?",
+    o: ["2", "3", "4", "6"],
     c: 0,
-    x: "A função exponencial cresce ou decresce rapidamente.\n\nIsso acontece porque o número está no expoente.",
-    imagem: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500"
+    x: "Na PG, encontramos a razão (q) dividindo um termo pelo seu antecessor.\n\n6 / 3 = 2.\n12 / 6 = 2.\n\nA razão é 2.",
+    imagem: ""
+  },
+  {
+    t: "Aula 10 - Encontre o 5º termo da PG (2, 4, 8, ...).",
+    o: ["16", "64", "128", "32"],
+    c: 3,
+    x: "A fórmula do termo geral da PG é an = a1 * q^(n-1).\n\na1 = 2, q = 2 (pois 4/2 = 2), n = 5.\n\na5 = 2 * 2^(5-1)\na5 = 2 * 2^4 = 2 * 16 = 32.",
+    imagem: ""
+  },
+  {
+    t: "Aula 11 - Em uma PG de termos positivos, qual é o termo médio entre 4 e 16?",
+    o: ["8", "10", "12", "6"],
+    c: 0,
+    x: "A propriedade da PG diz que o termo médio ao quadrado é igual ao produto dos extremos (b² = a * c).\n\nx² = 4 * 16\nx² = 64\nx = √64 = 8.",
+    imagem: ""
+  },
+  {
+    t: "Aula 12 - Para que uma PG com o primeiro termo positivo (ex: a1 = 10) seja classificada como DECRESCENTE, sua razão 'q' deve ser:",
+    o: ["q > 1", "q < 0", "0 < q < 1", "q = 1"],
+    c: 2,
+    x: "Para a PG diminuir sem ficar negativa, a razão deve ser uma fração entre 0 e 1.\n\nExemplo: q = 0,5. Os termos seriam (10, 5, 2.5...).",
+    imagem: ""
+  },
+  {
+    t: "Aula 13 - A soma dos 4 primeiros termos da PG (1, 3, 9, 27) é igual a:",
+    o: ["39", "40", "41", "30"],
+    c: 1,
+    x: "Como são poucos termos, podemos somar diretamente: 1 + 3 + 9 + 27.\n\n1 + 3 = 4\n4 + 9 = 13\n13 + 27 = 40.",
+    imagem: ""
+  },
+  {
+    t: "Aula 14 - A soma dos infinitos termos da PG decrescente (1, 1/2, 1/4, 1/8...) é:",
+    o: ["1", "1.5", "3", "2"],
+    c: 3,
+    x: "Usamos a fórmula da soma infinita: S = a1 / (1 - q).\n\nNeste caso, a1 = 1 e q = 1/2.\n\nS = 1 / (1 - 0.5) = 1 / 0.5 = 2.",
+    imagem: ""
+  },
+  {
+    t: "Aula 15 - Uma colônia de bactérias dobra a cada hora. Se inicialmente existem 10 bactérias, quantas haverá após 3 horas?",
+    o: ["80", "60", "40", "100"],
+    c: 0,
+    x: "O crescimento forma uma PG de razão 2.\nInicial (hora 0) = 10.\nHora 1 = 20.\nHora 2 = 40.\nHora 3 = 80.\n\nOu pela fórmula: 10 * 2³ = 80.",
+    imagem: ""
+  },
+  {
+    t: "Aula 16 - Se uma PG possui uma razão negativa (q < 0), ela é classificada como:",
+    o: ["Positiva", "Oscilante (ou alternante)", "Nula", "Crescente"],
+    c: 1,
+    x: "Quando a razão é negativa, os sinais se alternam.\n\nEx: a1 = 2, q = -3. A sequência fica (2, -6, 18, -54...).\nPor alternar entre positivo e negativo, chamamos de oscilante ou alternante.",
+    imagem: ""
+  },
+  {
+    t: "Aula 17 - Se plotarmos os termos de uma Progressão Aritmética num gráfico cartesiano, eles estarão alinhados sobre o formato de qual função?",
+    o: ["Parábola (Função Quadrática)", "Curva (Função Exponencial)", "Reta (Função Afim)", "Hipérbole"],
+    c: 2,
+    x: "A PA tem um crescimento linear constante (a razão).\n\nIsso tem exatamente o mesmo comportamento de uma Função Afim (f(x) = ax + b), cujo gráfico é uma reta.",
+    imagem: ""
+  },
+  {
+    t: "Aula 18 - O termo geral de uma PG cresce multiplicando a razão seguidas vezes. Isso tem comportamento idêntico a qual tipo de função?",
+    o: ["Afim", "Quadrática", "Logarítmica", "Exponencial"],
+    c: 3,
+    x: "A PG multiplica uma base elevada a um expoente (an = a1 * q^(n-1)).\n\nEssa variação no expoente caracteriza o gráfico de uma função exponencial, que cresce (ou decresce) rapidamente.",
+    imagem: ""
+  },
+  {
+    t: "Aula 19 - Dadas as sequências S1: (2, 4, 6, 8) e S2: (2, 4, 8, 16), podemos afirmar que elas são, respectivamente:",
+    o: ["PG e PA", "PA e PA", "PA e PG", "PG e PG"],
+    c: 2,
+    x: "S1 soma 2 a cada passo (+2), logo é uma PA.\n\nS2 multiplica por 2 a cada passo (x2), logo é uma PG.",
+    imagem: ""
+  },
+  {
+    t: "Aula 20 - Qual é o 3º termo da PA de razão 3 que começa em 1, e qual o 3º termo da PG de razão 3 que começa em 1, respectivamente?",
+    o: ["7 e 9", "6 e 9", "7 e 8", "9 e 7"],
+    c: 0,
+    x: "Para a PA: a1 = 1. a2 = 1+3=4. a3 = 4+3=7.\n\nPara a PG: a1 = 1. a2 = 1*3=3. a3 = 3*3=9.\n\nLogo, os resultados são 7 e 9.",
+    imagem: ""
+  },
+  {
+    t: "Aula 21 - Um capital de R$ 100,00 aplicado a Juros Simples com taxa de 10% ao mês rende quanto de JURO em 2 meses?",
+    o: ["R$ 10,00", "R$ 20,00", "R$ 21,00", "R$ 120,00"],
+    c: 1,
+    x: "Usamos a fórmula J = C * i * t.\n\nC = 100, i = 0.10, t = 2.\nJ = 100 * 0.10 * 2 = 20.\n\nO juro gerado é R$ 20,00.",
+    imagem: ""
+  },
+  {
+    t: "Aula 22 - O mesmo capital de R$ 100,00 aplicado a Juros Compostos a 10% ao mês gera qual MONTANTE final em 2 meses?",
+    o: ["R$ 120,00", "R$ 110,00", "R$ 122,00", "R$ 121,00"],
+    c: 3,
+    x: "Fórmula: M = C * (1 + i)^t\n\nM = 100 * (1 + 0.10)²\nM = 100 * (1.10)²\nM = 100 * 1.21 = 121.\n\nO montante é R$ 121,00.",
+    imagem: ""
+  },
+  {
+    t: "Aula 23 - Numa aplicação a longo prazo com a mesma taxa mensal (acima de 1 mês), qual sistema rende um montante maior?",
+    o: ["Juros simples", "Juros compostos", "Rendem igual", "Depende do capital inicial"],
+    c: 1,
+    x: "No regime de juros compostos, ocorre o \"juro sobre juro\". \n\nA partir do segundo período de capitalização, os juros compostos sempre gerarão um rendimento maior que os juros simples.",
+    imagem: ""
+  },
+  {
+    t: "Aula 24 - O crescimento do capital em Juros Simples e Juros Compostos se assemelha, matematicamente e respectivamente, a quais sequências?",
+    o: ["PA e PA", "PG e PG", "PA e PG", "PG e PA"],
+    c: 2,
+    x: "Nos Juros Simples, o valor soma de forma constante (como a razão de uma PA).\n\nNos Juros Compostos, o valor é multiplicado por um fator constante (1+i), funcionando exatamente como a razão (q) de uma PG.",
+    imagem: ""
   }
 ];
 
