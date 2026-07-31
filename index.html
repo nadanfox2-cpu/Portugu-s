@@ -127,14 +127,13 @@ const db = firebase.database();
 
 let nome="", i=0, pontos=0, respostas=[], respondido=false;
 
-// Coloque todas as suas outras questões aqui seguindo este padrão de objeto
 const banco = [
   {
     t: "Resolva a equação exponencial: 2^x = 8",
     o: ["2", "3", "4", "1"],
     c: 1, 
     x: "Para resolver, transformamos 8 em potência de base 2.\n\nSabemos que 8 = 2³.\n\nEntão igualamos os expoentes: x = 3.",
-    imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500"
+    imagem: "https://tkoc.fandom.com/pt-br/wiki/Goku"
   },
   {
     t: "Qual é a principal characteristic da função exponencial?",
@@ -164,7 +163,7 @@ function carregar(){
   // Atualiza cabeçalho do progresso
   document.getElementById("progresso").innerText = `Questão ${i+1} de ${banco.length}`;
 
-  // Renderiza enunciado numerado + Imagem integrada no contêiner correto (#p)
+  // Renderiza enunciado numerado 
   let containerPergunta = document.getElementById("p");
   containerPergunta.innerHTML = `<p><strong>Questão ${i+1}:</strong> ${q.t}</p>`;
 
