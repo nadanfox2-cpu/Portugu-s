@@ -77,10 +77,37 @@ border-radius:8px;
 border-left:4px solid red;
 white-space: pre-line;
 }
+
+.tag-colou {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    background: #ffe6e6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+#tela-punicao {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: black; color: red;
+    z-index: 9999;
+    flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 20px;
+}
+#tela-punicao h1 { font-size: 30px; margin-bottom: 10px; }
+#tela-punicao p { font-size: 18px; margin-bottom: 20px; color: white; }
 </style>
 </head>
 
 <body>
+
+<div id="tela-punicao">
+    <h1>🚨 FRAUDE DETECTADA 🚨</h1>
+    <p>Você saiu do simulado, mudou de janela ou tentou tirar print.<br>Essa ação foi registrada no sistema.</p>
+    <button onclick="fecharPunicao()" style="max-width: 300px; background: white; color: black; font-weight: bold;">Estou ciente, voltar para a prova</button>
+</div>
 
 <div class="card">
 
@@ -88,7 +115,7 @@ white-space: pre-line;
 <h2>Simulado Matemática</h2>
 <input id="nome" placeholder="Seu nome">
 <button onclick="iniciar()">Iniciar Prova</button>
-<button onclick="window.location.href='adm.html'">Área ADM</button>
+<button onclick="window.location.href='adm.html'" style="background:#333">Área ADM</button>
 </div>
 
 <div id="quiz">
@@ -97,7 +124,7 @@ white-space: pre-line;
 <div id="op"></div>
 <p id="exp"></p>
 <button onclick="prox()">Próxima</button>
-<button id="btnVoltar" onclick="voltar()">Voltar</button>
+<button id="btnVoltar" onclick="voltar()" style="background:#333">Voltar</button>
 </div>
 
 <div id="final">
@@ -106,7 +133,7 @@ white-space: pre-line;
 <h3>Ranking Geral</h3>
 <div id="ranking"></div>
 <button onclick="reiniciar()">Reiniciar Prova</button>
-<button onclick="gerarPDF()">Baixar PDF</button>
+<button onclick="gerarPDF()" style="background:#333">Baixar PDF</button>
 </div>
 
 </div>
@@ -126,6 +153,46 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let nome="", i=0, pontos=0, respostas=[], respondido=false;
+
+let emProva = false; 
+let colou = false;
+
+function registrarFraude() {
+    if (!emProva) return; 
+    colou = true; 
+    document.getElementById("tela-punicao").style.display = "flex"; 
+}
+
+function fecharPunicao() {
+    document.getElementById("tela-punicao").style.display = "none";
+}
+
+// DETECÇÃO 1: Mudar de aba ou minimizar navegador
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden && emProva) {
+        registrarFraude();
+    }
+});
+
+// DETECÇÃO 2: Perder o foco da janela (Alt+Tab, abrir outro app, clicar fora no PC)
+window.addEventListener("blur", () => {
+    if (emProva) {
+        registrarFraude();
+    }
+});
+
+// DETECÇÃO 3: Tecla PrintScreen
+window.addEventListener("keyup", (e) => {
+    if (emProva && e.key === "PrintScreen") registrarFraude();
+});
+
+// DETECÇÃO 4: Atalhos de captura no Windows / Mac
+window.addEventListener("keydown", (e) => {
+    if (emProva && ((e.metaKey && e.shiftKey && e.key === "s") || 
+        (e.metaKey && e.shiftKey && (e.key === "3" || e.key === "4" || e.key === "5")))) {
+        registrarFraude();
+    }
+});
 
 const banco = [
   {
@@ -298,12 +365,19 @@ const banco = [
   }
 ];
 
+
 function iniciar(){
-  nome = document.getElementById("nome").value;
-  if(!nome) return alert("Digite seu nome");
+  nome = document.getElementById("nome").value.trim();
+  if(!nome) {
+    document.getElementById("nome").style.border = "2px solid red";
+    return;
+  }
 
   document.getElementById("inicio").style.display = "none";
   document.getElementById("quiz").style.display = "block";
+
+  emProva = true; 
+  colou = false; 
 
   carregar();
 }
@@ -314,10 +388,7 @@ function carregar(){
   let q = banco[i];
   respondido = false;
 
-  // Atualiza cabeçalho do progresso
   document.getElementById("progresso").innerText = `Questão ${i+1} de ${banco.length}`;
-
-  // Renderiza enunciado numerado 
   let containerPergunta = document.getElementById("p");
   containerPergunta.innerHTML = `<p><strong>Questão ${i+1}:</strong> ${q.t}</p>`;
 
@@ -325,15 +396,16 @@ function carregar(){
     containerPergunta.innerHTML += `<img src="${q.imagem}" alt="Imagem da questão" style="display:block; max-width:100%; max-height:280px; margin:15px auto; border-radius:6px; border:1px solid #333;">`;
   }
 
-  // Renderiza alternativas
   let html = "";
   q.o.forEach((o, idx) => {
     html += `<div class="opcao" data-idx="${idx}" onclick="responder(${idx})">${o}</div>`;
   });
   document.getElementById("op").innerHTML = html;
-  document.getElementById("exp").innerText = "";
+  
+  let exp = document.getElementById("exp");
+  exp.innerText = "";
+  exp.style.color = "#fff";
 
-  // Verifica se o aluno já voltou e respondeu essa antes
   let respAnterior = respostas[i];
   if(respAnterior){
     respondido = true;
@@ -342,7 +414,7 @@ function carregar(){
     if(respAnterior.r !== respAnterior.c){
       ops[respAnterior.r].classList.add("errada");
     }
-    document.getElementById("exp").innerText = respAnterior.x;
+    exp.innerText = respAnterior.x;
   }
 }
 
@@ -361,12 +433,17 @@ function responder(e){
   }
 
   respostas[i] = {q: q.t, r: e, c: q.c, x: q.x, o: q.o};
-  document.getElementById("exp").innerText = q.x;
+  let exp = document.getElementById("exp");
+  exp.style.color = "#fff";
+  exp.innerText = q.x;
 }
 
 function prox(){
   if(!respondido && i < banco.length) {
-    return alert("Por favor, responda a questão antes de avançar.");
+    let exp = document.getElementById("exp");
+    exp.innerText = "⚠️ Por favor, escolha uma alternativa antes de avançar.";
+    exp.style.color = "#ffcc00";
+    return;
   }
   i++;
   carregar();
@@ -379,6 +456,8 @@ function voltar(){
 }
 
 function fim(){
+  emProva = false; 
+  
   document.getElementById("quiz").style.display = "none";
   document.getElementById("final").style.display = "block";
 
@@ -392,7 +471,8 @@ function salvarRanking(){
   db.ref("ranking").push({
     nome: nome,
     pontos: pontos,
-    data: Date.now()
+    data: Date.now(),
+    colou: colou 
   });
 }
 
@@ -405,7 +485,10 @@ function mostrarRanking(){
     lista.sort((a,b) => b.pontos - a.pontos);
 
     document.getElementById("ranking").innerHTML =
-      lista.map((x, idx) => `${idx+1}º - ${x.nome} (${x.pontos} acertos)`).join("<br>");
+      lista.map((x, idx) => {
+          let tagCola = x.colou ? `<span class="tag-colou">🚨 Colou</span>` : '';
+          return `${idx+1}º - ${x.nome} (${x.pontos} acertos) ${tagCola}`;
+      }).join("<br><br>");
   });
 }
 
@@ -414,6 +497,9 @@ function reiniciar(){
   pontos = 0;
   respostas = [];
   respondido = false;
+  
+  colou = false; 
+  emProva = false;
 
   document.getElementById("final").style.display = "none";
   document.getElementById("quiz").style.display = "none";
