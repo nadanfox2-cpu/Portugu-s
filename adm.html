@@ -20,7 +20,7 @@ margin:0;
 
 .card{
 width:100%;
-max-width:600px;
+max-width:650px;
 background:#0b0b0b;
 padding:20px;
 border-radius:15px;
@@ -36,14 +36,53 @@ color:#fff;
 border:none;
 border-radius:10px;
 cursor:pointer;
+font-weight: bold;
 }
 
 input{
-  width:200px;
-  padding:10px;
+  width:100%;
+  padding:14px;
   margin-top:10px;
   border-radius:10px;
   border:none;
+  box-sizing: border-box;
+}
+
+.tag-colou {
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+    background: #ffe6e6;
+    padding: 3px 6px;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.aluno-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #222;
+}
+
+.aluno-info {
+    font-size: 16px;
+}
+
+.btn-apagar {
+    width: auto;
+    padding: 6px 12px;
+    margin: 0;
+    background: darkred;
+    font-size: 13px;
+    border-radius: 5px;
+}
+.btn-apagar:hover {
+    background: red;
 }
 </style>
 </head>
@@ -54,24 +93,25 @@ input{
 
 <h2>Área Administrativa</h2>
 
-<input id="senha" placeholder="Senha">
+<!-- TELA DE LOGIN (ANTES DE ENTRAR) -->
+<div id="tela-login">
+  <input id="senha" placeholder="Digite a Senha" type="password">
+  <button id="btnEntrar">Entrar</button>
+  <button onclick="voltar()" style="background: #333; margin-top: 10px;">← Voltar ao Simulado</button>
+</div>
 
-
-<button id="btnEntrar">Entrar</button>
-
+<!-- PAINEL ADM (DEPOIS DE LOGAR) -->
 <div id="painel" style="display:none">
-<h3>Ranking</h3>
-<div id="rank"></div>
+  <h3>Ranking (Tempo Real)</h3>
+  <div id="rank"></div>
 
-<button onclick="limpar()">Limpar Ranking</button>
-<button onclick="voltar()">Voltar</button>
+  <button onclick="limpar()" style="background: #333; margin-top: 20px;">🗑️ Limpar Todo o Ranking</button>
+  <button onclick="voltar()" style="background: #555; margin-top: 10px;">← Sair / Voltar ao Simulado</button>
 </div>
 
 </div>
 
 <script>
-
-
 const firebaseConfig = {
   apiKey: "AIzaSyDpyHKHjNhVGP_T-azFM8VE99mMzoQ2TKw",
   authDomain: "simulado1.firebaseapp.com",
@@ -90,46 +130,70 @@ function login(){
   let s = document.getElementById("senha").value;
 
   if(s !== "2821"){
-    alert("Senha errada");
+    alert("Senha incorreta!");
     return;
   }
 
-
-  document.getElementById("painel").style.display = "block"
-  document.getElementById("btnEntrar").style.display = "none";
-
-  document.getElementById("senha").style.display = "none";
+  document.getElementById("tela-login").style.display = "none";
+  document.getElementById("painel").style.display = "block";
 
   mostrar();
 }
-
 
 function mostrar(){
   db.ref("ranking").off(); 
 
   db.ref("ranking").on("value",(snapshot)=>{
-
     let dados = snapshot.val() || {};
-    let lista = Object.values(dados);
+    
+    let lista = Object.keys(dados).map(key => {
+        return {
+            id: key, 
+            ...dados[key] 
+        };
+    });
 
-    lista.sort((a,b)=>b.pontos-a.pontos);
+    lista.sort((a,b) => b.pontos - a.pontos);
+
+    if (lista.length === 0) {
+        document.getElementById("rank").innerHTML = "<p style='color: gray;'>Nenhum aluno no ranking ainda.</p>";
+        return;
+    }
 
     document.getElementById("rank").innerHTML =
-      lista.map((x,i)=>`${i+1}º ${x.nome} - ${x.pontos}`).join("<br>");
-
+      lista.map((x, i) => {
+          let tagCola = x.colou ? `<span class="tag-colou">🚨 Colou</span>` : '';
+          
+          return `
+          <div class="aluno-item">
+              <div class="aluno-info">
+                  <strong>${i+1}º</strong> ${x.nome} - ${x.pontos} acertos ${tagCola}
+              </div>
+              <button class="btn-apagar" onclick="apagarAluno('${x.id}', '${x.nome}')">Excluir</button>
+          </div>
+          `;
+      }).join("");
   });
 }
 
+function apagarAluno(id, nome){
+  if(confirm(`Tem certeza que deseja apagar o resultado de ${nome}?`)) {
+      db.ref("ranking/" + id).remove();
+  }
+}
 
 function limpar(){
-  db.ref("ranking").remove();
+  if(confirm("🚨 ATENÇÃO: Tem certeza que deseja limpar TODO o ranking? Isso não pode ser desfeito!")) {
+      db.ref("ranking").remove();
+  }
 }
 
 function voltar(){
   window.location.href = "index.html";
 }
-
 </script>
 
 </body>
 </html>
+
+```
