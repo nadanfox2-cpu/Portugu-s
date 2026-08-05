@@ -200,7 +200,7 @@ const banco = [
     o: ["19 (Soma-se 4)", "18 (Soma-se 3)", "20 (Multiplica-se por 2)", "16 (Soma-se 1)"],
     c: 0, 
     x: "Analisando a sequência, notamos que a diferença entre um termo e o anterior é sempre constante.\n\n7 - 3 = 4\n11 - 7 = 4\n\nPara achar o próximo termo, basta somar 4 ao último: 15 + 4 = 19.",
-    imagem: "1.peg"
+    imagem: ""
   },
   {
     t: "Aula 2 - Qual é o 10º termo de uma Progressão Aritmética (PA) onde o primeiro termo é 2 e a razão é 3?",
@@ -365,6 +365,7 @@ const banco = [
   }
 ];
 
+
 function iniciar(){
   nome = document.getElementById("nome").value.trim();
   if(!nome) {
@@ -391,7 +392,7 @@ function carregar(){
   let containerPergunta = document.getElementById("p");
   containerPergunta.innerHTML = `<p><strong>Questão ${i+1}:</strong> ${q.t}</p>`;
 
-  if(q.imagem && q.imagem.trim() !== ""){
+  if(q.imagem){
     containerPergunta.innerHTML += `<img src="${q.imagem}" alt="Imagem da questão" style="display:block; max-width:100%; max-height:280px; margin:15px auto; border-radius:6px; border:1px solid #333;">`;
   }
 
